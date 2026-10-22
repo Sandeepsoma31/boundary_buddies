@@ -1,239 +1,737 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#102a22">
-<title>Boundary Buddies — Batting Order</title>
-<style>
-:root {
-  --site-primary: #174734;
-  --site-secondary: #f3c969;
-  --site-background: #f5f5ed;
-  --site-on-primary: #ffffff;
-  --site-on-secondary: #19251e;
-  --site-on-background: #17261f;
-  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --site-heading-scale: 1;
-  --site-spacing-scale: 1;
-  --site-radius-scale: 1;
-  --site-decoration-opacity: 1;
-}
-* { box-sizing: border-box; }
-body { margin:0; font-family:var(--site-font-body); background:light-dark(#f5f5ed,#101a16); color:light-dark(#17261f,#eef5ef); }
-button,input,textarea { font:inherit; }
-button { cursor:pointer; }
-#app { min-height:100vh; background-color:var(--site-background); color:var(--site-on-background); border-radius:0; }
-.hero { background:var(--site-primary); color:var(--site-on-primary); padding:28px 18px 34px; position:relative; overflow:hidden; }
-.hero:after { content:""; position:absolute; width:250px;height:250px;border:1px solid rgba(255,255,255,.15);border-radius:50%;right:-75px;top:-105px;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025);opacity:var(--site-decoration-opacity);pointer-events:none; }
-.wrap { width:min(760px,100%); margin:0 auto; position:relative; z-index:1; }
-.brand { display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.92; }
-.ball { width:34px;height:34px;border-radius:50%;background:var(--site-secondary);color:#183526;display:grid;place-items:center;font-size:18px; }
-h1 { font-family:var(--site-font-heading);font-size:calc(36px * var(--site-heading-scale));letter-spacing:-.045em;line-height:1.02;margin:25px 0 10px;max-width:520px; }
-.hero p { margin:0;color:#dce9df;line-height:1.5;max-width:500px;font-size:15px; }
-main { width:min(760px,100%);margin:0 auto;padding:20px 14px 50px; }
-.panel { background:light-dark(#fff,#1b2822);color:light-dark(#17261f,#eef5ef);border:1px solid light-dark(#e1e6dc,#34443a);border-radius:calc(20px * var(--site-radius-scale));padding:18px;margin-bottom:14px;box-shadow:0 6px 20px rgba(15,45,30,.045); }
-.panel h2 { font-size:18px;margin:0 0 5px;letter-spacing:-.02em; }
-.muted { color:light-dark(#647268,#a7b6aa);font-size:13px;line-height:1.5; }
-label { display:block;font-size:13px;font-weight:700;margin:13px 0 7px; }
-input,textarea { width:100%;border:1px solid light-dark(#d5ddd2,#425349);border-radius:11px;padding:12px;background:light-dark(#fbfcf8,#111c16);color:light-dark(#17261f,#eef5ef);outline:none; }
-input:focus,textarea:focus { border-color:var(--site-primary);box-shadow:0 0 0 3px rgba(23,71,52,.12); }
-.grid2 { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
-.btn { border:0;border-radius:12px;padding:12px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:45px; }
-.primary { background:var(--site-primary);color:white; }
-.secondary { background:var(--site-secondary);color:#17261f; }
-.outline { background:transparent;border:1px solid light-dark(#cbd6c9,#45564b);color:inherit; }
-.danger { color:#9d382c;border:1px solid #e5b7ae;background:transparent; }
-.full { width:100%; }
-.row { display:flex;gap:9px;flex-wrap:wrap;align-items:center; }
-.row > .btn { flex:1; }
-.pill { font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:6px 9px;background:#e8f2e8;color:#22563a;display:inline-flex;align-items:center;gap:5px; }
-.pill.gold { background:#fff2ce;color:#76550a; }
-.player-list { display:grid;gap:8px;margin:12px 0; }
-.player { display:flex;align-items:center;gap:10px;border:1px solid light-dark(#e3e8df,#35453b);background:light-dark(#fcfdf9,#15211a);padding:10px;border-radius:12px; }
-.player input[type=checkbox] { width:19px;height:19px;accent-color:var(--site-primary);flex:0 0 auto; }
-.player .person { flex:1;min-width:0; }
-.player .person strong { display:block;font-size:14px; }
-.player .person small { color:light-dark(#6d796f,#aab7ad);font-size:12px; }
-.remove { border:0;background:transparent;color:#9b4b3f;font-size:20px;padding:3px 6px; }
-.order { list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px; }
-.order li { display:flex;align-items:center;gap:13px;padding:13px;border-radius:13px;background:light-dark(#f5f7ef,#142119);border:1px solid light-dark(#e1e8dc,#34463a); }
-.rank { width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:light-dark(#e1eddf,#253c2d);color:light-dark(#23583a,#c6e6ca);font-weight:900; }
-.order li:first-child .rank { background:var(--site-secondary);color:#1b2b20; }
-.order .who { flex:1;font-weight:800; }
-.order .uid { font-size:11px;color:light-dark(#6b796d,#a8b8ab);font-weight:600; }
-.empty { text-align:center;padding:22px 8px;color:light-dark(#748176,#9caca0);font-size:14px; }
-.admin-box { background:light-dark(#f8f4e8,#29271c);border:1px dashed light-dark(#d7c99c,#675d38);border-radius:14px;padding:14px;margin-top:12px; }
-.admin-box h3 { margin:0 0 5px;font-size:15px; }
-.notice { border-radius:12px;padding:11px 12px;font-size:13px;line-height:1.5;margin-top:10px;background:light-dark(#edf5e9,#1e3423);color:light-dark(#2b5a36,#c7e5c8); }
-.warning { background:light-dark(#fff1e8,#38271d);color:light-dark(#87462d,#f0c0a1); }
-.small { font-size:12px; }
-footer { text-align:center;padding:8px 20px 26px;color:light-dark(#748176,#9caca0);font-size:12px; }
-.hidden { display:none !important; }
-hr { border:0;border-top:1px solid light-dark(#e2e7df,#35443a);margin:16px 0; }
-@media(min-width:640px){ .hero{padding:34px 24px 42px} h1{font-size:calc(48px * var(--site-heading-scale))} main{padding:24px 18px 60px}.panel{padding:22px} }
-@media(max-width:430px){ .grid2{grid-template-columns:1fr}.hero h1{font-size:34px} .panel{padding:15px} }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102a22">
+  <title>Boundary Buddies — Cricket Club</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --green:#174734;--green-dark:#102a22;--gold:#f3c969;
+      --background:#f5f5ed;--card:#fff;--text:#19372b;
+      --muted:#718078;--border:#dce4dc;--red:#a83b32;--radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--background);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled,input:disabled{cursor:not-allowed;opacity:.55}
+    .hidden{display:none!important}
+    .topbar{background:var(--green-dark);color:white;padding:23px 18px;border-bottom:4px solid var(--gold)}
+    .topbar-inner,.container{width:min(1050px,calc(100% - 28px));margin:auto}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-icon{width:48px;height:48px;display:grid;place-items:center;background:var(--gold);color:var(--green-dark);border-radius:15px;font-size:25px}
+    h1{margin:0;font-size:clamp(23px,5vw,32px)}
+    .tagline{color:#d2dfd5;font-size:13px;margin-top:3px}
+    .container{padding:20px 0 42px}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:17px;box-shadow:0 4px 15px #183b2910;min-width:0}
+    h2{font-size:19px;margin:0 0 8px}
+    h3{font-size:15px;margin:0 0 10px}
+    p{margin:8px 0}
+    .muted{color:var(--muted);font-size:13px}
+    .small{font-size:12px}
+    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .between{justify-content:space-between}
+    .grow{flex:1;min-width:0}
+    .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:17px}
+    .btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;padding:10px 14px;min-height:42px;border:1px solid transparent;border-radius:10px;font-weight:750;font-size:13px;transition:filter .15s ease}
+    .btn:hover:not(:disabled){filter:brightness(.96)}
+    .primary{background:var(--green);color:white}
+    .gold{background:var(--gold);color:var(--green-dark)}
+    .outline{background:white;color:var(--green);border-color:var(--border)}
+    .danger{background:#fff0ee;color:var(--red);border-color:#f0cbc7}
+    .full{width:100%}
+    .pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 10px;background:#e8efe9;color:var(--green);font-size:11px;font-weight:800}
+    .pill.gold{background:#fff2cf;color:#72531a}
+    label{display:block;font-size:12px;font-weight:750;margin:12px 0 5px}
+    input[type="text"],input[type="email"],input[type="password"],input[type="date"],input[type="number"]{width:100%;min-width:0;min-height:42px;border:1px solid #ccd8cf;border-radius:9px;padding:9px 11px;background:white;color:var(--text);outline:none}
+    input:focus{border-color:var(--green);box-shadow:0 0 0 3px #17473416}
+    .inline-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end;gap:9px}
+    .inline-form label{margin-top:0}
+    .notice{padding:11px 13px;background:#edf5ee;border-radius:10px;color:#315f40;font-size:12px;overflow-wrap:anywhere}
+    .notice.warning{background:#fff3dd;color:#795719}
+    .notice.error{background:#fff0ee;color:#943c34}
+    .section-spacer{margin-top:16px}
+    .player-list{display:grid;gap:8px;margin-top:14px}
+    .player{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:11px;padding:11px;min-width:0}
+    .player input{accent-color:var(--green);width:17px;height:17px}
+    .person{flex:1;min-width:0}
+    .person strong{display:block;overflow-wrap:anywhere}
+    .person small{display:block;color:var(--muted);font-size:11px}
+    .remove{border:0;background:transparent;color:var(--red);font-size:23px;padding:0 6px}
+    .empty{text-align:center;padding:24px 10px;border:1px dashed #cbd8ce;border-radius:12px;color:var(--muted);font-size:13px}
+    .order{list-style:none;padding:0;margin:15px 0 0;display:grid;gap:8px}
+    .order li{display:flex;align-items:center;gap:11px;padding:11px;background:#f5f8f3;border:1px solid #e1e9e0;border-radius:11px;min-width:0}
+    .rank{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:10px;background:var(--green);color:white;font-weight:850}
+    .who{flex:1;min-width:0;overflow-wrap:anywhere}
+    .uid{font-size:11px;color:var(--muted)}
+    .admin-box{background:#f7f9f5;border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:13px}
+    .permission{display:flex;gap:9px;align-items:center;font-size:13px;margin:9px 0}
+    .permission input{accent-color:var(--green)}
+    .scoreboard{background:var(--green);color:white;border-radius:15px;padding:19px;margin-top:14px}
+    .score-main{display:flex;align-items:end;justify-content:space-between;flex-wrap:wrap;gap:14px}
+    .score-runs{font-size:clamp(38px,9vw,54px);font-weight:900;letter-spacing:-1.5px;line-height:1.1}
+    .score-overs{font-size:14px;color:#dce9df;margin-top:7px}
+    .score-teams{margin-top:15px;font-size:13px;line-height:1.9;color:#e7efe8}
+    .score-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
+    .score-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+    .score-actions .btn{min-width:0;padding:9px 4px}
+
+    /* Coin toss */
+    .coin-panel{text-align:center;overflow:hidden}
+    .coin-stage{display:grid;place-items:center;min-height:185px;padding:12px}
+    .coin{
+      width:132px;height:132px;border-radius:50%;
+      display:grid;place-items:center;position:relative;
+      border:7px solid #d39c2e;
+      background:radial-gradient(circle at 35% 28%,#fff1b5 0%,#f3c969 43%,#dba43b 100%);
+      box-shadow:0 8px 0 #a97720,0 13px 22px #183b2925,inset 0 0 0 3px #fff4c8;
+      color:var(--green-dark);
+      transform-style:preserve-3d;
+    }
+    .coin::before{content:"";position:absolute;inset:8px;border:2px dashed #9c6d1d;border-radius:50%}
+    .coin-face{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;z-index:1}
+    .coin-symbol{font-size:37px;font-weight:950;line-height:1}
+    .coin-label{font-size:14px;font-weight:950;letter-spacing:1.5px}
+    .coin.flipping{animation:coinFlip .9s ease-in-out}
+    @keyframes coinFlip{
+      0%{transform:rotateY(0) rotateZ(0) scale(1)}
+      25%{transform:rotateY(450deg) rotateZ(10deg) scale(1.08)}
+      50%{transform:rotateY(900deg) rotateZ(-10deg) scale(1.12)}
+      75%{transform:rotateY(1350deg) rotateZ(5deg) scale(1.06)}
+      100%{transform:rotateY(1800deg) rotateZ(0) scale(1)}
+    }
+    .coin-result{font-size:25px;font-weight:900;color:var(--green);min-height:38px;margin:5px 0}
+    .coin-result-sub{font-size:12px;color:var(--muted);min-height:20px}
+    .coin-buttons{max-width:330px;margin:16px auto 0}
+    .coin-history{font-size:12px;color:var(--muted);margin-top:12px;overflow-wrap:anywhere}
+    .coin-panel .btn:disabled{cursor:wait}
+
+    .footer{text-align:center;color:var(--muted);font-size:11px;padding:8px 10px 25px}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}}
+    @media(max-width:460px){
+      .panel{padding:15px}
+      .inline-form,.score-form{grid-template-columns:1fr}
+      .score-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .coin{width:118px;height:118px}
+      .coin-stage{min-height:165px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .coin.flipping{animation:none}
+      *{scroll-behavior:auto!important}
+    }
+  </style>
 </head>
 <body>
-<div id="app">
-  <header class="hero">
-    <div class="wrap">
-      <div class="brand"><span class="ball">🏏</span> Boundary Buddies</div>
-      <h1>Who's walking in<br>to bat today?</h1>
-      <p>One squad. One shared order. No arguments. The first draw stays locked until the admin chooses a fresh one.</p>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-icon">🏏</div>
+      <div><h1>Boundary Buddies</h1><div class="tagline">One team. One spirit. Every run counts.</div></div>
     </div>
-  </header>
-  <main>
-    <section class="panel">
-      <div class="row" style="justify-content:space-between">
-        <div><h2>Today's match</h2><div class="muted">Choose who's playing for this session.</div></div>
-        <span class="pill" id="datePill">Today</span>
-      </div>
-      <label for="matchDate">Match date</label>
-      <input id="matchDate" type="date">
-      <div class="muted small" style="margin-top:6px">Each date has its own player selection and batting order.</div>
-    </section>
+  </div>
+</header>
 
-    <section class="panel">
-      <h2>Squad list</h2>
-      <p class="muted">Add each friend once using their name and unique ID. Tick today's players below.</p>
-      <div class="grid2">
-        <div><label for="playerName">Player name</label><input id="playerName" placeholder="e.g. Rahul" maxlength="50"></div>
-        <div><label for="playerId">Unique ID</label><input id="playerId" placeholder="e.g. P01" maxlength="24"></div>
-      </div>
-      <button class="btn primary full" id="addPlayer" style="margin-top:10px">＋ Add player to squad</button>
-      <div id="playersList" class="player-list"></div>
-      <div class="muted small">IDs must be unique. Removing someone from the squad won't rewrite an already locked order.</div>
-    </section>
+<main class="container">
+  <section class="panel">
+    <div class="row between">
+      <div><h2>Match centre</h2><div class="muted">Choose a date to view its batting order and score.</div></div>
+      <span class="pill" id="datePill">Match date</span>
+    </div>
+    <label for="matchDate">Match date</label>
+    <input type="date" id="matchDate">
+    <div id="storageNotice" class="notice section-spacer">Connecting to the shared database…</div>
+  </section>
 
-    <section class="panel">
-      <div class="row" style="justify-content:space-between">
-        <div><h2>Batting order</h2><div class="muted">This is the order everyone should follow.</div></div>
-        <span id="status" class="pill gold">Not drawn</span>
+  <section class="panel" id="liveScorePanel">
+    <div class="row between">
+      <div><h2>Live cricket score</h2><div class="muted">Updates are shared with everyone viewing this date.</div></div>
+      <span class="pill gold" id="scoreLiveStatus">Not started</span>
+    </div>
+    <div class="scoreboard">
+      <div class="score-main">
+        <div><div class="score-runs" id="scoreRuns">0/0</div><div class="score-overs" id="scoreOvers">0.0 overs</div></div>
+        <span class="pill gold" id="scoreTargetPill">Target not set</span>
       </div>
-      <div id="orderArea" class="empty">Select today's players, then the admin can draw the first order.</div>
-      <div id="orderMeta" class="muted small"></div>
-      <div class="row" style="margin-top:14px">
-        <button class="btn secondary full" id="shareBtn">↗ Share this page</button>
-        <button class="btn outline full" id="copyBtn">Copy order</button>
+      <div class="score-teams">
+        <div><strong>Batting:</strong> <span id="scoreBattingTeam">Team A</span></div>
+        <div><strong>Bowling:</strong> <span id="scoreBowlingTeam">Team B</span></div>
+        <div id="scoreUpdatedAt">No score saved yet.</div>
       </div>
-      <div class="notice warning" id="storageNotice">Preview mode: this page stores data only in this browser. For everyone to see the same locked order, connect a shared database and publish the site (setup guide below).</div>
-    </section>
+    </div>
+    <div class="admin-box">
+      <h3>Score controls</h3>
+      <p class="muted small">Only the owner or a backup admin with Manage Scores can update the score.</p>
+      <div class="score-form">
+        <div><label for="battingTeamInput">Batting team</label><input id="battingTeamInput" type="text" maxlength="60" value="Team A"></div>
+        <div><label for="bowlingTeamInput">Bowling team</label><input id="bowlingTeamInput" type="text" maxlength="60" value="Team B"></div>
+        <div><label for="scoreRunsInput">Runs</label><input id="scoreRunsInput" type="number" min="0" max="999" value="0"></div>
+        <div><label for="scoreWicketsInput">Wickets (0–10)</label><input id="scoreWicketsInput" type="number" min="0" max="10" value="0"></div>
+        <div><label for="scoreOversInput">Completed overs</label><input id="scoreOversInput" type="number" min="0" max="999" value="0"></div>
+        <div><label for="scoreBallsInput">Balls in current over (0–5)</label><input id="scoreBallsInput" type="number" min="0" max="5" value="0"></div>
+        <div><label for="scoreTargetInput">Target (0 = none)</label><input id="scoreTargetInput" type="number" min="0" max="999" value="0"></div>
+      </div>
+      <button class="btn primary full section-spacer" id="saveScoreBtn">Save score settings</button>
+      <p class="muted small section-spacer">Each quick action records one delivery. Use manual settings for extras or unusual deliveries. For accurate shared scoring, use one scorekeeper.</p>
+      <div class="score-actions section-spacer">
+        <button class="btn outline" id="dotBallBtn">Dot ball</button>
+        <button class="btn outline" id="run1Btn">+1 run</button>
+        <button class="btn outline" id="run4Btn">+4 runs</button>
+        <button class="btn outline" id="run6Btn">+6 runs</button>
+        <button class="btn danger" id="wicketBtn">Wicket</button>
+      </div>
+    </div>
+    <div class="notice warning section-spacer" id="scoreNotice">View-only scorecard until an authorized admin signs in.</div>
+  </section>
 
-    <section class="panel">
-      <h2>Admin controls</h2>
-      <p class="muted">Only the admin should control the draw. In this local preview, the admin PIN is a convenience lock, not secure authentication.</p>
-      <div id="adminSetup">
-        <label for="adminPin">Create an admin PIN (4+ digits/characters)</label>
-        <input id="adminPin" type="password" placeholder="Create PIN" autocomplete="new-password">
-        <button class="btn primary full" id="setPin" style="margin-top:10px">Set admin PIN on this device</button>
+  <!-- Public coin toss: no sign-in and no Firestore writes required. -->
+  <section class="panel coin-panel" id="coinTossPanel">
+    <div class="row between">
+      <div style="text-align:left">
+        <h2>🪙 Coin Toss</h2>
+        <div class="muted">Heads or Tails? Let the toss decide!</div>
       </div>
-      <div id="adminActions" class="hidden">
-        <div class="pill">Admin unlocked on this device</div>
-        <div class="row" style="margin-top:12px">
-          <button class="btn primary" id="drawBtn">🎲 Draw first order</button>
-          <button class="btn secondary" id="freshBtn">↻ New batting order</button>
+      <span class="pill gold">50/50 chance</span>
+    </div>
+
+    <div class="coin-stage" aria-live="polite">
+      <div class="coin" id="coin">
+        <div class="coin-face">
+          <span class="coin-symbol" id="coinSymbol">₹</span>
+          <span class="coin-label" id="coinFaceLabel">READY</span>
         </div>
-        <button class="btn outline full" id="lockBtn" style="margin-top:9px">Lock admin controls</button>
-        <div class="notice warning">A fresh draw replaces the current order for this date. The previous order is retained in the local history in this preview.</div>
       </div>
-      <div id="adminMessage" class="muted small" style="margin-top:10px"></div>
+    </div>
+
+    <div class="coin-result" id="coinResult" aria-live="polite">Ready for the toss?</div>
+    <div class="coin-result-sub" id="coinResultSub">Tap the button to flip the coin.</div>
+
+    <div class="coin-buttons">
+      <button class="btn primary full" id="flipCoinBtn" type="button">🪙 Flip Coin</button>
+      <button class="btn outline full section-spacer" id="resetCoinBtn" type="button">Reset toss</button>
+    </div>
+
+    <div class="coin-history" id="coinHistory">Flips this visit: 0</div>
+    <p class="muted small">Available to everyone. No admin sign-in required. Results are local to this browser and are not saved to the shared match data.</p>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <div class="row between"><h2>Squad</h2><span class="pill" id="squadCount">0 players</span></div>
+      <div class="muted">Select players for this match before drawing the batting order.</div>
+      <div class="admin-box">
+        <h3>Add player</h3>
+        <div class="inline-form">
+          <div><label for="playerName">Player name</label><input id="playerName" type="text" maxlength="80" placeholder="Player name"></div>
+          <div><label for="playerId">Unique player ID</label><input id="playerId" type="text" maxlength="30" placeholder="e.g. BB01"></div>
+          <button class="btn primary" id="addPlayer">Add player</button>
+        </div>
+        <p class="muted small">Only admins with Manage Squad can add or remove players.</p>
+      </div>
+      <div class="player-list" id="playersList"><div class="empty">Loading squad…</div></div>
     </section>
 
     <section class="panel">
-      <h2>Go live for the whole group</h2>
-      <p class="muted">This file is a functional prototype. To make it a real shared portal, publish the front end and use a central database with server-enforced admin permissions.</p>
-      <ol class="muted" style="padding-left:20px;line-height:1.7">
-        <li>Create a Firebase project at <strong>console.firebase.google.com</strong>.</li>
-        <li>Enable Firebase Authentication. Give the admin a sign-in; friends can view the order without edit rights.</li>
-        <li>Create a Cloud Firestore database. Store each match by date with selected player IDs, current order, version, and order history.</li>
-        <li>Deploy this site using Firebase Hosting. Configure Firestore Security Rules so only the authenticated admin can create/replace an order; viewers can read it.</li>
-        <li>Share the resulting Hosting URL in your group chat.</li>
-      </ol>
-      <div class="notice">Important: local browser storage cannot synchronize phones or guarantee persistence if browser data is cleared. The live deployment needs the database and security rules above before using it for a real match.</div>
+      <div class="row between"><h2>Batting order</h2><span class="pill gold" id="status">Not drawn</span></div>
+      <p class="muted">The order is shared with everyone for the selected match date.</p>
+      <div id="orderArea" class="empty">Loading batting order…</div>
+      <div class="muted section-spacer" id="orderMeta"></div>
+      <div class="admin-box" id="adminActions">
+        <h3>Batting order controls</h3>
+        <button class="btn primary full" id="drawBtn">🎲 Draw batting order</button>
+        <button class="btn outline full section-spacer" id="freshBtn">🔄 New batting order</button>
+        <button class="btn danger full section-spacer hidden" id="clearOrderBtn">🗑 Clear batting order</button>
+        <button class="btn outline full section-spacer" id="lockBtn">Hide admin controls</button>
+        <p class="muted small">Admins with Manage Batting Order can clear the current order. Previous draw history is preserved.</p>
+      </div>
+      <div class="row section-spacer">
+        <button class="btn outline grow" id="copyBtn">Copy order and score</button>
+        <button class="btn outline grow" id="shareBtn">Share</button>
+      </div>
     </section>
-  </main>
-  <footer>Made for the squad · Boundary Buddies 🏏</footer>
-</div>
-<script>
-(() => {
- const $ = id => document.getElementById(id);
- const today = new Date();
- const localDate = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
- $('matchDate').value = localDate;
- const key = 'boundary-buddies-preview-v1';
- let state = load();
- let unlocked = false;
- function load(){ try { return JSON.parse(localStorage.getItem(key)) || {squad:[],matches:{},pinHash:null}; } catch { return {squad:[],matches:{},pinHash:null}; } }
- function save(){ localStorage.setItem(key, JSON.stringify(state)); }
- function match(){ const d=$('matchDate').value || localDate; if(!state.matches[d]) state.matches[d]={selected:[],order:null,history:[]}; return state.matches[d]; }
- function escapeHTML(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
- function render(){
-   $('datePill').textContent = $('matchDate').value || 'Choose date';
-   const m=match();
-   $('playersList').innerHTML = state.squad.length ? state.squad.map(p=>`<div class="player"><input type="checkbox" data-select="${escapeHTML(p.id)}" ${m.selected.includes(p.id)?'checked':''} ${m.order?'disabled':''}><div class="person"><strong>${escapeHTML(p.name)}</strong><small>ID: ${escapeHTML(p.id)}</small></div><button class="remove" data-remove="${escapeHTML(p.id)}" title="Remove player" ${m.order?'disabled':''}>×</button></div>`).join('') : '<div class="empty">No players yet. Add your friends above.</div>';
-   document.querySelectorAll('[data-select]').forEach(el=>el.addEventListener('change',()=>{const id=el.dataset.select;const mm=match();if(el.checked&&!mm.selected.includes(id))mm.selected.push(id);if(!el.checked)mm.selected=mm.selected.filter(x=>x!==id);save();render();}));
-   document.querySelectorAll('[data-remove]').forEach(el=>el.addEventListener('click',()=>{if(!confirm('Remove this player from the squad?'))return;state.squad=state.squad.filter(p=>p.id!==el.dataset.remove);Object.values(state.matches).forEach(mm=>{if(!mm.order)mm.selected=mm.selected.filter(x=>x!==el.dataset.remove)});save();render();}));
-   const locked=!!m.order;
-   $('status').textContent=locked?'Order locked':'Not drawn';
-   $('status').className='pill '+(locked?'':'gold');
-   if(m.order){
-     $('orderArea').className='';
-     $('orderArea').innerHTML='<ol class="order">'+m.order.map((p,i)=>`<li><span class="rank">${i+1}</span><span class="who">${escapeHTML(p.name)}<div class="uid">ID: ${escapeHTML(p.id)}</div></span>${i===0?'<span class="pill gold">Opener</span>':''}</li>`).join('')+'</ol>';
-     $('orderMeta').textContent=`Locked for ${$('matchDate').value}. ${m.order.length} players · Draw #${m.history.length || 1}`;
-   } else {
-     $('orderArea').className='empty';
-     $('orderArea').textContent='Select today’s players, then the admin can draw the first order.';
-     $('orderMeta').textContent=`${m.selected.length} player${m.selected.length===1?'':'s'} selected`;
-   }
-   $('drawBtn').disabled=locked || m.selected.length<2;
-   $('freshBtn').disabled=!locked || m.selected.length<2;
-   $('drawBtn').style.opacity=$('drawBtn').disabled?'.55':'1';
-   $('freshBtn').style.opacity=$('freshBtn').disabled?'.55':'1';
-   $('adminSetup').classList.toggle('hidden',unlocked);
-   $('adminActions').classList.toggle('hidden',!unlocked);
-   $('storageNotice').textContent='Preview mode: saved in this browser only. A live shared database is required for all phones to see the same order.';
- }
- $('addPlayer').addEventListener('click',()=>{
-   const name=$('playerName').value.trim(),id=$('playerId').value.trim().toUpperCase();
-   if(!name||!id){alert('Enter both player name and unique ID.');return}
-   if(state.squad.some(p=>p.id.toLowerCase()===id.toLowerCase())){alert('That unique ID already exists.');return}
-   state.squad.push({name,id});$('playerName').value='';$('playerId').value='';save();render();
- });
- $('matchDate').addEventListener('change',()=>{unlocked=false;render()});
- $('setPin').addEventListener('click',()=>{
-   const pin=$('adminPin').value;
-   if(pin.length<4){alert('Choose a PIN with at least 4 characters.');return}
-   state.pinHash=pin;save();unlocked=true;$('adminPin').value='';$('adminMessage').textContent='PIN set for this browser. For the live site, use secure admin authentication.';render();
- });
- // On this prototype device, the creator PIN unlock is intentionally local-only.
- $('drawBtn').addEventListener('click',()=>draw(false));
- $('freshBtn').addEventListener('click',()=>{if(confirm('Generate a fresh order? This replaces the current order for everyone using the live version.'))draw(true)});
- function draw(fresh){
-   const m=match();
-   if(!unlocked){alert('Unlock admin controls first.');return}
-   if(m.selected.length<2){alert('Select at least two players.');return}
-   if(m.order&&!fresh){alert('The first order is already locked. Use New batting order if you really want to replace it.');return}
-   if(m.order) m.history.push({at:new Date().toISOString(),order:m.order});
-   const pool=m.selected.map(id=>state.squad.find(p=>p.id===id)).filter(Boolean);
-   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
-   m.order=pool.map(p=>({name:p.name,id:p.id}));
-   m.drawnAt=new Date().toISOString();save();render();
- }
- $('lockBtn').addEventListener('click',()=>{unlocked=false;render()});
- $('shareBtn').addEventListener('click',async()=>{
-   const shareData={title:'Boundary Buddies',text:'Check today’s batting order — Boundary Buddies',url:location.href};
-   try{if(navigator.share)await navigator.share(shareData);else{await navigator.clipboard.writeText(location.href);alert('Page link copied. Share it with your group.')}}catch(e){}
- });
- $('copyBtn').addEventListener('click',async()=>{
-   const m=match();
-   const txt=m.order?`Boundary Buddies — batting order (${ $('matchDate').value })\n`+m.order.map((p,i)=>`${i+1}. ${p.name} (${p.id})`).join('\n'):'No batting order drawn yet.';
-   try{await navigator.clipboard.writeText(txt);alert('Batting order copied.')}catch{prompt('Copy this batting order:',txt)}
- });
- render();
-})();
+  </div>
+
+  <section class="panel">
+    <div class="row between">
+      <div><h2>Admin access</h2><div class="muted">Sign in to manage the features assigned to your account.</div></div>
+      <span class="pill" id="rolePill">View mode</span>
+    </div>
+    <div id="signedOut">
+      <label for="adminEmail">Admin email</label><input id="adminEmail" type="email" autocomplete="username" placeholder="Admin email">
+      <label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password">
+      <button class="btn primary full section-spacer" id="signInBtn">Sign in</button>
+    </div>
+    <div id="signedIn" class="hidden">
+      <div class="notice">Signed in as <strong id="signedInEmail"></strong></div>
+      <p class="muted section-spacer" id="permissionSummary"></p>
+      <button class="btn outline" id="signOutBtn">Sign out</button>
+    </div>
+    <div id="adminMessage" class="notice section-spacer">View mode. Sign in with an authorized admin account.</div>
+    <div class="admin-box hidden" id="adminManagement">
+      <h3>Manage backup admins</h3>
+      <p class="muted small">The backup admin must already exist in Firebase Authentication. Enter that user's exact Authentication UID. This form creates or updates their Firestore permissions; it does not create an Authentication account.</p>
+      <label for="backupUid">Backup admin Firebase Auth UID</label><input id="backupUid" type="text" placeholder="Paste the exact UID">
+      <label for="backupEmail">Backup admin email</label><input id="backupEmail" type="email" placeholder="Email address">
+      <h3 class="section-spacer">Permissions</h3>
+      <label class="permission"><input id="permSquad" type="checkbox"> Manage squad</label>
+      <label class="permission"><input id="permMatches" type="checkbox"> Manage match selection</label>
+      <label class="permission"><input id="permBatting" type="checkbox"> Manage batting order</label>
+      <label class="permission"><input id="permScore" type="checkbox"> Manage scores</label>
+      <button class="btn primary full section-spacer" id="saveAdminBtn">Save backup-admin permissions</button>
+      <button class="btn outline full section-spacer" id="clearAdminFormBtn">Clear form</button>
+      <hr style="border:0;border-top:1px solid var(--border);margin:18px 0">
+      <h3>Load or revoke an existing backup admin</h3>
+      <label for="existingAdminUid">Backup admin UID</label><input id="existingAdminUid" type="text" placeholder="Paste UID">
+      <div class="row section-spacer"><button class="btn outline grow" id="loadAdminBtn">Load permissions</button><button class="btn danger grow" id="revokeAdminBtn">Revoke access</button></div>
+    </div>
+  </section>
+  <div class="footer">Boundary Buddies · Shared cricket squad and match centre</div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore,collection,doc,getDoc,onSnapshot,setDoc,deleteDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyAcmykmTMS3Wx9rUgKjV5z5D3D1iFy3-aI",
+  authDomain:"boundary-buddies.firebaseapp.com",
+  projectId:"boundary-buddies",
+  storageBucket:"boundary-buddies.firebasestorage.app",
+  messagingSenderId:"681305091910",
+  appId:"1:681305091910:web:6f00e653e30b1bc13a7f47"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const nowDate=new Date();
+const today=`${nowDate.getFullYear()}-${String(nowDate.getMonth()+1).padStart(2,'0')}-${String(nowDate.getDate()).padStart(2,'0')}`;
+$('matchDate').value=today;
+
+let squad=[],matchData=null,currentDate=today,currentUser=null,isOwner=false;
+let adminPermissions={manageSquad:false,manageMatches:false,manageBattingOrder:false,manageScore:false,manageAdmins:false};
+let controlsVisible=false,busy=false,scoreBusy=false,scoreData=null;
+let stopSquadListener=null,stopMatchListener=null,stopScoreListener=null,authCheckSequence=0;
+
+function can(key){return isOwner||adminPermissions[key]===true}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function showMessage(text,error=false){$('adminMessage').textContent=text;$('adminMessage').className=`notice section-spacer${error?' error':''}`}
+function showError(error){
+  console.error(error);
+  if(error?.code==='permission-denied')showMessage('Firestore denied this action. Verify the published rules and account permissions.',true);
+  else if(['auth/invalid-credential','auth/invalid-login-credentials'].includes(error?.code))showMessage('Sign-in failed. Check your email and password.',true);
+  else if(error?.code==='auth/too-many-requests')showMessage('Too many sign-in attempts. Please wait and try again.',true);
+  else showMessage(error?.message||'An unexpected error occurred.',true);
+}
+function emptyMatch(){return{date:currentDate,selected:[],order:null,history:[],drawnAt:null}}
+function normalizeMatch(data){
+  const m=data||emptyMatch();
+  return{date:currentDate,selected:Array.isArray(m.selected)?m.selected:[],order:Array.isArray(m.order)&&m.order.length?m.order:null,history:Array.isArray(m.history)?m.history:[],drawnAt:m.drawnAt||null};
+}
+function emptyScore(){return{date:currentDate,battingTeam:'Team A',bowlingTeam:'Team B',runs:0,wickets:0,overs:0,balls:0,target:0,updatedAt:null,updatedBy:null}}
+function normalizeScore(data){
+  const s=data||emptyScore();
+  return{date:currentDate,battingTeam:typeof s.battingTeam==='string'?s.battingTeam:'Team A',bowlingTeam:typeof s.bowlingTeam==='string'?s.bowlingTeam:'Team B',runs:Number.isInteger(s.runs)?s.runs:0,wickets:Number.isInteger(s.wickets)?s.wickets:0,overs:Number.isInteger(s.overs)?s.overs:0,balls:Number.isInteger(s.balls)?s.balls:0,target:Number.isInteger(s.target)?s.target:0,updatedAt:s.updatedAt||null,updatedBy:s.updatedBy||null};
+}
+
+/* Public coin toss. This does not use Firebase or admin permissions. */
+let coinFlipCount=0;
+let coinIsFlipping=false;
+
+function getCoinResult(){
+  // Use a cryptographically secure random bit where supported.
+  if(window.crypto?.getRandomValues){
+    const randomValues=new Uint32Array(1);
+    window.crypto.getRandomValues(randomValues);
+    return(randomValues[0]&1)===0?'HEADS':'TAILS';
+  }
+  return Math.random()<0.5?'HEADS':'TAILS';
+}
+
+$('flipCoinBtn').addEventListener('click',()=>{
+  if(coinIsFlipping)return;
+
+  coinIsFlipping=true;
+  const coin=$('coin');
+  const button=$('flipCoinBtn');
+
+  button.disabled=true;
+  button.textContent='🪙 Flipping…';
+  $('coinResult').textContent='The coin is in the air…';
+  $('coinResultSub').textContent='Let’s see who wins the toss!';
+  coin.classList.remove('flipping');
+
+  // Restart the animation on every click.
+  void coin.offsetWidth;
+  coin.classList.add('flipping');
+
+  const result=getCoinResult();
+  const finishFlip=()=>{
+    coin.classList.remove('flipping');
+    $('coinFaceLabel').textContent=result;
+    $('coinSymbol').textContent=result==='HEADS'?'H':'T';
+    $('coinResult').textContent=result+'!';
+    $('coinResultSub').textContent='Toss complete. Flip again whenever you like.';
+    coinFlipCount++;
+    $('coinHistory').textContent=`Flips this visit: ${coinFlipCount}`;
+    button.disabled=false;
+    button.textContent='🪙 Flip Again';
+    coinIsFlipping=false;
+  };
+
+  // Respect reduced-motion preferences while keeping the same result flow.
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    finishFlip();
+  }else{
+    coin.addEventListener('animationend',finishFlip,{once:true});
+  }
+});
+
+$('resetCoinBtn').addEventListener('click',()=>{
+  if(coinIsFlipping)return;
+  const coin=$('coin');
+  coin.classList.remove('flipping');
+  $('coinFaceLabel').textContent='READY';
+  $('coinSymbol').textContent='₹';
+  $('coinResult').textContent='Ready for the toss?';
+  $('coinResultSub').textContent='Tap the button to flip the coin.';
+  $('flipCoinBtn').textContent='🪙 Flip Coin';
+  $('coinHistory').textContent=`Flips this visit: ${coinFlipCount}`;
+});
+
+function showAdminState(){
+  const signedIn=!!currentUser;
+  $('signedOut').classList.toggle('hidden',signedIn);
+  $('signedIn').classList.toggle('hidden',!signedIn);
+  $('signedInEmail').textContent=currentUser?.email||'';
+  $('rolePill').textContent=!signedIn?'View mode':isOwner?'Owner admin':'Backup admin';
+  $('permissionSummary').textContent=isOwner?'Full owner access. You can manage backup admins.':[
+    can('manageSquad')&&'Manage squad',
+    can('manageMatches')&&'Manage match selection',
+    can('manageBattingOrder')&&'Manage batting order',
+    can('manageScore')&&'Manage scores'
+  ].filter(Boolean).join(' · ')||'No permissions assigned. View-only access.';
+
+  $('adminActions').classList.toggle('hidden',!(signedIn&&can('manageBattingOrder')&&controlsVisible));
+  $('adminManagement').classList.toggle('hidden',!(signedIn&&isOwner&&controlsVisible));
+  $('playerName').disabled=!can('manageSquad');
+  $('playerId').disabled=!can('manageSquad');
+  $('addPlayer').disabled=!can('manageSquad');
+
+  $('clearOrderBtn').classList.toggle('hidden',!(signedIn&&can('manageBattingOrder')&&controlsVisible&&!!matchData?.order));
+
+  const scoreEditable=signedIn&&can('manageScore')&&!scoreBusy;
+  ['battingTeamInput','bowlingTeamInput','scoreRunsInput','scoreWicketsInput','scoreOversInput','scoreBallsInput','scoreTargetInput','saveScoreBtn','dotBallBtn','run1Btn','run4Btn','run6Btn','wicketBtn'].forEach(id=>{$(id).disabled=!scoreEditable});
+}
+
+async function saveMatch(data,kind){
+  const permission=kind==='order'?'manageBattingOrder':'manageMatches';
+  if(!can(permission)){showMessage('You do not have permission for this action.',true);return false}
+  try{
+    await setDoc(doc(db,'matches',currentDate),{
+      date:currentDate,selected:data.selected||[],order:data.order||null,
+      history:data.history||[],drawnAt:data.drawnAt||null,updatedAt:new Date().toISOString()
+    },{merge:true});
+    showMessage('Match data saved and shared.');return true;
+  }catch(error){showError(error);return false}
+}
+
+function renderSquad(){
+  const m=matchData||emptyMatch(),locked=!!m.order;
+  $('squadCount').textContent=`${squad.length} player${squad.length===1?'':'s'}`;
+  if(!squad.length)$('playersList').innerHTML='<div class="empty">No players yet. An authorized admin can add players.</div>';
+  else $('playersList').innerHTML=squad.map(player=>{
+    const selected=m.selected.includes(player.id);
+    return `<div class="player">
+      <input type="checkbox" data-select="${escapeHTML(player.id)}" ${selected?'checked':''} ${!can('manageMatches')||locked?'disabled':''} aria-label="Select ${escapeHTML(player.name)}">
+      <div class="person"><strong>${escapeHTML(player.name)}</strong><small>ID: ${escapeHTML(player.id)}</small></div>
+      ${can('manageSquad')?`<button class="remove" data-remove="${escapeHTML(player.id)}" aria-label="Remove player" title="Remove player">×</button>`:''}
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('[data-select]').forEach(input=>input.addEventListener('change',async()=>{
+    if(!can('manageMatches')||!matchData||matchData.order)return;
+    const selected=[...matchData.selected],id=input.dataset.select;
+    if(input.checked&&!selected.includes(id))selected.push(id);
+    if(!input.checked){const index=selected.indexOf(id);if(index!==-1)selected.splice(index,1)}
+    await saveMatch({...matchData,selected},'selection');
+  }));
+
+  document.querySelectorAll('[data-remove]').forEach(button=>button.addEventListener('click',async()=>{
+    if(!can('manageSquad'))return;
+    const id=button.dataset.remove,player=squad.find(p=>p.id===id);
+    if(!confirm(`Remove ${player?.name||id} from the permanent squad?`))return;
+    try{
+      await deleteDoc(doc(db,'squad',id));
+      if(matchData&&!matchData.order&&can('manageMatches'))await saveMatch({...matchData,selected:matchData.selected.filter(x=>x!==id)},'selection');
+      showMessage('Player removed from the permanent squad.');
+    }catch(error){showError(error)}
+  }));
+}
+
+function renderMatch(){
+  const m=matchData||emptyMatch(),locked=!!m.order;
+  $('datePill').textContent=currentDate;
+  $('status').textContent=locked?'Order locked':'Not drawn';
+  $('status').className=locked?'pill':'pill gold';
+  if(locked){
+    $('orderArea').className='';
+    $('orderArea').innerHTML=`<ol class="order">${m.order.map((player,index)=>`<li><span class="rank">${index+1}</span><span class="who"><strong>${escapeHTML(player.name)}</strong><div class="uid">ID: ${escapeHTML(player.id)}</div></span>${index===0?'<span class="pill gold">Opener</span>':''}</li>`).join('')}</ol>`;
+    $('orderMeta').textContent=`Locked for ${currentDate}. ${m.order.length} players · Draw #${m.history.length+1}`;
+  }else{
+    $('orderArea').className='empty';
+    $('orderArea').textContent='Select at least two players, then draw the batting order.';
+    $('orderMeta').textContent=`${m.selected.length} player${m.selected.length===1?'':'s'} selected`;
+  }
+  $('drawBtn').disabled=!can('manageBattingOrder')||locked||m.selected.length<2||busy;
+  $('freshBtn').disabled=!can('manageBattingOrder')||!locked||m.selected.length<2||busy;
+  renderSquad();showAdminState();
+}
+
+function renderScore(){
+  const s=normalizeScore(scoreData);
+  $('scoreRuns').textContent=`${s.runs}/${s.wickets}`;
+  $('scoreOvers').textContent=`${s.overs}.${s.balls} overs`;
+  $('scoreBattingTeam').textContent=s.battingTeam||'Team A';
+  $('scoreBowlingTeam').textContent=s.bowlingTeam||'Team B';
+  $('scoreTargetPill').textContent=s.target>0?`Target ${s.target}`:'Target not set';
+  $('scoreLiveStatus').textContent=scoreData?'Live':'Not started';
+  $('scoreUpdatedAt').textContent=s.updatedAt?`Updated ${new Date(s.updatedAt).toLocaleString()}`:'No score saved yet.';
+  if(document.activeElement?.id?.startsWith('score')||['battingTeamInput','bowlingTeamInput'].includes(document.activeElement?.id)){showAdminState();return}
+  $('battingTeamInput').value=s.battingTeam;
+  $('bowlingTeamInput').value=s.bowlingTeam;
+  $('scoreRunsInput').value=s.runs;
+  $('scoreWicketsInput').value=s.wickets;
+  $('scoreOversInput').value=s.overs;
+  $('scoreBallsInput').value=s.balls;
+  $('scoreTargetInput').value=s.target;
+  showAdminState();
+}
+
+function subscribeToSquad(){
+  if(stopSquadListener)stopSquadListener();
+  stopSquadListener=onSnapshot(collection(db,'squad'),snapshot=>{
+    squad=snapshot.docs.map(d=>({id:d.id,name:d.data().name||d.id})).sort((a,b)=>a.name.localeCompare(b.name));
+    renderSquad();renderMatch();
+  },showError);
+}
+function subscribeToMatch(date){
+  if(stopMatchListener)stopMatchListener();
+  if(stopScoreListener)stopScoreListener();
+  currentDate=date;matchData=null;scoreData=null;renderMatch();renderScore();
+  stopMatchListener=onSnapshot(doc(db,'matches',date),snapshot=>{
+    matchData=normalizeMatch(snapshot.exists()?snapshot.data():null);
+    renderMatch();
+    $('storageNotice').textContent='Connected to the shared database. Match updates sync through Firestore.';
+    $('storageNotice').className='notice';
+  },error=>{
+    $('storageNotice').textContent='Unable to load this match. Check Firestore permissions and connection.';
+    $('storageNotice').className='notice error';showError(error);
+  });
+  stopScoreListener=onSnapshot(doc(db,'scores',date),snapshot=>{
+    scoreData=snapshot.exists()?normalizeScore(snapshot.data()):null;renderScore();
+  },error=>{
+    $('scoreNotice').textContent='Unable to load score. Check Firestore rules and connection.';
+    $('scoreNotice').className='notice error';console.error(error);
+  });
+}
+
+function setScoreNotice(text,error=false){$('scoreNotice').textContent=text;$('scoreNotice').className=`notice section-spacer${error?' error':''}`}
+function readScoreForm(){
+  const number=id=>Number($(id).value);
+  const runs=number('scoreRunsInput'),wickets=number('scoreWicketsInput'),overs=number('scoreOversInput'),balls=number('scoreBallsInput'),target=number('scoreTargetInput');
+  if(!Number.isInteger(runs)||runs<0||runs>999||!Number.isInteger(wickets)||wickets<0||wickets>10||!Number.isInteger(overs)||overs<0||overs>999||!Number.isInteger(balls)||balls<0||balls>5||!Number.isInteger(target)||target<0||target>999)throw new Error('Invalid score values. Balls must be between 0 and 5.');
+  return{date:currentDate,battingTeam:$('battingTeamInput').value.trim()||'Team A',bowlingTeam:$('bowlingTeamInput').value.trim()||'Team B',runs,wickets,overs,balls,target,updatedAt:new Date().toISOString(),updatedBy:currentUser.uid};
+}
+async function writeScore(data){
+  if(!currentUser||!can('manageScore')){setScoreNotice('You need Manage Scores permission to update the score.',true);return false}
+  if(scoreBusy)return false;
+  scoreBusy=true;showAdminState();
+  try{await setDoc(doc(db,'scores',currentDate),data);setScoreNotice('Live cricket score saved and shared.');return true}
+  catch(error){console.error(error);setScoreNotice(error.code==='permission-denied'?'Firestore denied the score update. Verify the published rules.':error.message||'Could not save the score.',true);return false}
+  finally{scoreBusy=false;renderScore()}
+}
+async function scoreDelivery(runs,wicket=false){
+  if(!currentUser||!can('manageScore')){setScoreNotice('You need Manage Scores permission.',true);return}
+  if(scoreBusy)return;
+  const s=normalizeScore(scoreData);
+  if(s.wickets>=10){setScoreNotice('This innings has reached 10 wickets.',true);return}
+  const nextBalls=s.balls+1,completedOver=nextBalls===6;
+  await writeScore({...s,runs:s.runs+runs,wickets:Math.min(10,s.wickets+(wicket?1:0)),overs:s.overs+(completedOver?1:0),balls:completedOver?0:nextBalls,updatedAt:new Date().toISOString(),updatedBy:currentUser.uid});
+}
+
+$('matchDate').addEventListener('change',()=>{
+  const date=$('matchDate').value;
+  if(!date){$('matchDate').value=currentDate;return}
+  controlsVisible=false;subscribeToMatch(date);
+});
+$('addPlayer').addEventListener('click',async()=>{
+  if(!can('manageSquad')){showMessage('You do not have permission to manage the squad.',true);return}
+  const name=$('playerName').value.trim(),id=$('playerId').value.trim().toUpperCase();
+  if(!name||!id){alert('Enter both the player name and unique ID.');return}
+  if(/[\/.#$\[\]]/.test(id)){alert('Avoid / . # $ [ ] in player IDs.');return}
+  if(squad.some(p=>p.id.toLowerCase()===id.toLowerCase())){alert('That player ID already exists.');return}
+  try{await setDoc(doc(db,'squad',id),{name,createdAt:new Date().toISOString()});$('playerName').value='';$('playerId').value='';showMessage('Player added to the shared squad.')}
+  catch(error){showError(error)}
+});
+
+async function drawOrder(isFresh){
+  if(!can('manageBattingOrder')||busy){showMessage('You do not have permission to manage the batting order.',true);return}
+  const m=matchData||emptyMatch();
+  if(m.selected.length<2){alert('Select at least two players.');return}
+  if(m.order&&!isFresh){alert('An order already exists. Use New batting order to redraw it.');return}
+  const players=m.selected.map(id=>squad.find(p=>p.id===id)).filter(Boolean).map(p=>({name:p.name,id:p.id}));
+  if(players.length<2){alert('At least two selected players must exist in the squad.');return}
+  for(let i=players.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[players[i],players[j]]=[players[j],players[i]]}
+  const history=[...m.history];
+  if(m.order)history.push({at:new Date().toISOString(),order:m.order});
+  busy=true;renderMatch();
+  await saveMatch({...m,order:players,history,drawnAt:new Date().toISOString()},'order');
+  busy=false;renderMatch();
+}
+$('drawBtn').addEventListener('click',()=>drawOrder(false));
+$('freshBtn').addEventListener('click',async()=>{if(confirm('Draw a new order? The current order will be saved in history first.'))await drawOrder(true)});
+
+$('clearOrderBtn').addEventListener('click',async()=>{
+  if(!currentUser||!can('manageBattingOrder')){
+    showMessage('You need Manage Batting Order permission to clear the order.',true);return;
+  }
+  if(!matchData?.order){showMessage('There is no current batting order to clear.',true);return}
+  if(!confirm(`Clear the current batting order and selected players for ${currentDate}? Previous draw history will be preserved.`))return;
+
+  try{
+    await setDoc(doc(db,'matches',currentDate),{
+      date:currentDate,
+      selected:[],
+      order:null,
+      history:matchData.history||[],
+      drawnAt:null,
+      updatedAt:new Date().toISOString()
+    },{merge:true});
+    showMessage('Current order and selection cleared. Draw history preserved.');
+  }catch(error){showError(error)}
+});
+$('lockBtn').addEventListener('click',()=>{controlsVisible=false;showAdminState()});
+$('saveScoreBtn').addEventListener('click',async()=>{try{await writeScore(readScoreForm())}catch(error){setScoreNotice(error.message,true)}});
+$('dotBallBtn').addEventListener('click',()=>scoreDelivery(0));
+$('run1Btn').addEventListener('click',()=>scoreDelivery(1));
+$('run4Btn').addEventListener('click',()=>scoreDelivery(4));
+$('run6Btn').addEventListener('click',()=>scoreDelivery(6));
+$('wicketBtn').addEventListener('click',async()=>{if(confirm('Record one wicket on this delivery?'))await scoreDelivery(0,true)});
+
+$('signInBtn').addEventListener('click',async()=>{
+  const email=$('adminEmail').value.trim(),password=$('adminPassword').value;
+  if(!email||!password){showMessage('Enter your admin email and password.',true);return}
+  $('signInBtn').disabled=true;
+  try{await signInWithEmailAndPassword(auth,email,password);$('adminPassword').value=''}
+  catch(error){showError(error)}
+  finally{$('signInBtn').disabled=false}
+});
+$('signOutBtn').addEventListener('click',async()=>{
+  controlsVisible=false;
+  try{await signOut(auth);showMessage('Signed out.')}catch(error){showError(error)}
+});
+$('copyBtn').addEventListener('click',async()=>{
+  const m=matchData||emptyMatch(),s=normalizeScore(scoreData);
+  const orderText=m.order?`Batting order (${currentDate})\n`+m.order.map((p,i)=>`${i+1}. ${p.name} (${p.id})`).join('\n'):'No batting order drawn yet.';
+  const text=`Boundary Buddies\n${orderText}\n\nLive score: ${s.battingTeam} ${s.runs}/${s.wickets} (${s.overs}.${s.balls} overs)\nBowling: ${s.bowlingTeam}`;
+  try{await navigator.clipboard.writeText(text);alert('Batting order and score copied.')}catch{prompt('Copy batting order and score:',text)}
+});
+$('shareBtn').addEventListener('click',async()=>{
+  const data={title:'Boundary Buddies',text:'View the shared Boundary Buddies batting order and live score.',url:location.href};
+  try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(location.href);alert('Page link copied.')}}
+  catch(error){if(error?.name!=='AbortError')console.error(error)}
+});
+
+function clearAdminForm(){$('backupUid').value='';$('backupEmail').value='';$('permSquad').checked=false;$('permMatches').checked=false;$('permBatting').checked=false;$('permScore').checked=false}
+function setAdminForm(uid,email,permissions){
+  $('backupUid').value=uid||'';$('backupEmail').value=email||'';
+  $('permSquad').checked=permissions?.manageSquad===true;
+  $('permMatches').checked=permissions?.manageMatches===true;
+  $('permBatting').checked=permissions?.manageBattingOrder===true;
+  $('permScore').checked=permissions?.manageScore===true;
+}
+$('clearAdminFormBtn').addEventListener('click',clearAdminForm);
+$('saveAdminBtn').addEventListener('click',async()=>{
+  if(!isOwner||!currentUser){showMessage('Only the owner can manage admins.',true);return}
+  const uid=$('backupUid').value.trim(),email=$('backupEmail').value.trim();
+  if(!uid||!email){showMessage('Enter the backup admin UID and email.',true);return}
+  if(uid===currentUser.uid){showMessage('You cannot replace the owner record with a backup-admin record.',true);return}
+  try{
+    await setDoc(doc(db,'admins',uid),{
+      role:'backup',email,
+      permissions:{manageSquad:$('permSquad').checked,manageMatches:$('permMatches').checked,manageBattingOrder:$('permBatting').checked,manageScore:$('permScore').checked,manageAdmins:false},
+      updatedAt:new Date().toISOString()
+    });
+    $('existingAdminUid').value=uid;showMessage('Backup-admin permissions saved. The Auth account must already exist.');
+  }catch(error){showError(error)}
+});
+$('loadAdminBtn').addEventListener('click',async()=>{
+  if(!isOwner){showMessage('Only the owner can manage admins.',true);return}
+  const uid=$('existingAdminUid').value.trim();
+  if(!uid){showMessage('Enter an existing backup-admin UID.',true);return}
+  try{
+    const snapshot=await getDoc(doc(db,'admins',uid));
+    if(!snapshot.exists()){showMessage('No admin record found for that UID.',true);return}
+    const admin=snapshot.data();
+    if(admin.role!=='backup'){showMessage('Owner records cannot be edited through this form.',true);return}
+    setAdminForm(uid,admin.email||'',admin.permissions||{});showMessage('Backup-admin permissions loaded.');
+  }catch(error){showError(error)}
+});
+$('revokeAdminBtn').addEventListener('click',async()=>{
+  if(!isOwner){showMessage('Only the owner can revoke admins.',true);return}
+  const uid=$('existingAdminUid').value.trim();
+  if(!uid){showMessage('Enter the backup-admin UID.',true);return}
+  if(uid===currentUser.uid){showMessage('The owner account cannot be revoked here.',true);return}
+  if(!confirm('Revoke this backup admin’s app permissions? Their Authentication account will remain.'))return;
+  try{
+    const ref=doc(db,'admins',uid),snapshot=await getDoc(ref);
+    if(!snapshot.exists()||snapshot.data().role!=='backup'){showMessage('No backup-admin record found.',true);return}
+    await deleteDoc(ref);clearAdminForm();$('existingAdminUid').value='';showMessage('Backup-admin app access revoked.');
+  }catch(error){showError(error)}
+});
+
+onAuthStateChanged(auth,async user=>{
+  const sequence=++authCheckSequence;
+  currentUser=user;isOwner=false;
+  adminPermissions={manageSquad:false,manageMatches:false,manageBattingOrder:false,manageScore:false,manageAdmins:false};
+  controlsVisible=false;
+  if(user){
+    try{
+      const snapshot=await getDoc(doc(db,'admins',user.uid));
+      if(sequence!==authCheckSequence)return;
+      const admin=snapshot.exists()?snapshot.data():null;
+      if(!admin||!['owner','backup'].includes(admin.role)){
+        showMessage('This account is not registered as an authorized admin. Signing out.',true);
+        await signOut(auth);return;
+      }
+      isOwner=admin.role==='owner';
+      const permissions=admin.permissions||{};
+      adminPermissions={
+        manageSquad:isOwner||permissions.manageSquad===true,
+        manageMatches:isOwner||permissions.manageMatches===true,
+        manageBattingOrder:isOwner||permissions.manageBattingOrder===true,
+        manageScore:isOwner||permissions.manageScore===true,
+        manageAdmins:isOwner
+      };
+      controlsVisible=true;
+      showMessage(isOwner?'Signed in and verified as owner.':'Signed in and verified as backup admin.');
+    }catch(error){
+      if(sequence===authCheckSequence){showError(error);await signOut(auth)}
+      return;
+    }
+  }else showMessage('View mode. Sign in with an authorized admin account to manage the app.');
+  if(sequence!==authCheckSequence)return;
+  showAdminState();renderMatch();renderScore();
+  setScoreNotice(can('manageScore')?'You can update this shared scorecard.':'View-only scorecard. An admin with Manage Scores can update it.');
+});
+
+subscribeToSquad();
+subscribeToMatch(today);
 </script>
 </body>
 </html>
